@@ -1,0 +1,57 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.jetbrains.kotlin.kapt' version '1.4.10'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.10'
+}
+
+apply plugin: 'kotlin-kapt'
+
+group = 'io.arct'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+
+    maven { url = 'https://git.arct.io/api/v4/projects/35/packages/maven' }
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = []
+        }
+    }
+}
+
+dependencies {
+    implementation "io.arct:rl:0.2.5"
+    implementation "io.arct:ftclib:0.2.5"
+    kapt "io.arct:ftcprocessor:0.2.5"
+
+    implementation fileTree(dir: 'libs', include: [ '*.jar' ])
+
+    implementation "com.squareup:kotlinpoet:1.4.4"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.10"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1"
+}
+
+task dex(type: Exec) {
+    group = "android"
+    standardOutput = new ByteArrayOutputStream()
+
+    dependsOn tasks.withType(Jar)
+
+    workingDir './bin'
+    commandLine 'cmd', '/c', 'dex.bat'
+}
+
+task upload(dependsOn: 'dex', type: Exec) {
+    group = "android"
+    standardOutput = new ByteArrayOutputStream()
+
+    workingDir './bin'
+    commandLine 'cmd', '/c', 'upload.bat'
+}
