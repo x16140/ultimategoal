@@ -9,10 +9,20 @@ apply plugin: 'kotlin-kapt'
 group = 'io.arct'
 version = '1.0.0'
 
+def Properties properties = new Properties()
+properties.load(project.file("local.properties").newDataInputStream())
+
 repositories {
     mavenCentral()
 
-    maven { url = 'https://git.arct.io/api/v4/projects/35/packages/maven' }
+    maven {
+        url = 'https://maven.pkg.github.com/techno-dynamics/rl'
+
+        credentials {
+            username = properties.getProperty('publish.user') ?: System.getenv("USERNAME")
+            password = properties.getProperty('publish.key') ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 sourceSets {
@@ -24,9 +34,9 @@ sourceSets {
 }
 
 dependencies {
-    implementation "io.arct:rl:0.2.5"
-    implementation "io.arct:ftclib:0.2.5"
-    kapt "io.arct:ftcprocessor:0.2.5"
+    implementation "io.arct:rl:0.1.0"
+    implementation "io.arct:ftclib:0.1.0"
+    kapt "io.arct:ftcprocessor:0.1.0"
 
     implementation fileTree(dir: 'libs', include: [ '*.jar' ])
 
