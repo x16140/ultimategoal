@@ -2,6 +2,7 @@ package io.arct.techno.ftc
 
 import io.arct.ftc.eventloop.OperationMode
 import io.arct.ftc.eventloop.OperationMode.Type
+import io.arct.ftc.hardware.input.Gamepad
 import io.arct.rl.control.ArcadeControl
 import io.arct.rl.control.MecanumControl
 import io.arct.rl.hardware.input.Controller
@@ -52,70 +53,82 @@ class Operated : OperationMode() {
     val mecanum = MecanumControl(drive, Controller::left, invertX = true, invertY = true)
     val arcade = ArcadeControl(drive, Controller::right, invertY = true)
 
-    var precisionDrive = false
-
-    var p0a = false
-    var p1rb = false
-
     override suspend fun loop() {
-        val turn = gamepad0.lt != .0 || gamepad0.rt != .0 || gamepad0.lb || gamepad0.rb
+        gamepad0 {
+            active {
+                val turn = gamepad0.lt != .0 || gamepad0.rt != .0 || +gamepad0.lb || +gamepad0.rb
 
-        if (!turn)
-            mecanum.apply(gamepad0)
+                if (!turn)
+                    mecanum.apply(gamepad0)
 
-        if (gamepad0.left.origin && !turn)
-            arcade.apply(gamepad0)
+                if (gamepad0.left.origin && !turn)
+                    arcade.apply(gamepad0)
+            }
 
-        if (gamepad0.a) if (!p0a) {
-            precisionDrive = !precisionDrive
-            p0a = true
-        } else
-            p0a = false
+            active(Gamepad::lt, .0) {
+                robot.rotate(robot.velocity * (gamepad0.lt * spotTurnVelocity))
+            }
 
-        if (gamepad0.lt != .0 || gamepad0.rt != .0)
-            robot.rotate(robot.velocity * (gamepad0.lt * spotTurnVelocity + gamepad0.rt * -spotTurnVelocity))
+            active(Gamepad::rt, .0) {
+                robot.rotate(robot.velocity * (gamepad0.rt * -spotTurnVelocity))
+            }
 
-        if (gamepad0.lb)
-            robot.rotate(robot.velocity * precisionSpotTurnVelocity)
+            active {
+                if (+gamepad0.lb)
+                    robot.rotate(robot.velocity * precisionSpotTurnVelocity)
 
-        if (gamepad0.rb)
-            robot.rotate(robot.velocity * -precisionSpotTurnVelocity)
-
-        // Gamepad 2
-        m7.power(gamepad1.left.y * wobbleSpeed + gamepad1.right.y * precisionWobbleSpeed)
-
-        s2.position = if (gamepad1.y) gripperPositionA else gripperPositionB
-        s3.position = if (gamepad1.x) calibration.shooterPower else calibration.shooterHigh
-
-        if (gamepad1.lt >= 0.5) {
-            m6.power(intakePowerA * 0.6)
-            m8.power(intakePowerB * 0.6)
-        } else if (gamepad1.lb) {
-            m6.power(-intakePowerA)
-            m8.power(-intakePowerB)
-        } else {
-            m6.power(0.0)
-            m8.power(0.0)
+                if (+gamepad0.rb)
+                    robot.rotate(robot.velocity * -precisionSpotTurnVelocity)
+            }
         }
 
-        if (gamepad1.rt >= 0.5)
-            m5.power(shooterPower)
-        else
-            m5.power(0.0)
+        gamepad1 {
+            active {
+                m7.power(gamepad1.left.y * wobbleSpeed + gamepad1.right.y * precisionWobbleSpeed)
+            }
 
-        if (gamepad1.rb) {
-            if (!p1rb) {
-                p1rb = true
+            active {
+                s2.position = if (+gamepad1.y) gripperPositionA else gripperPositionB
+                s3.position = if (+gamepad1.x) calibration.shooterPower else calibration.shooterHigh
+            }
 
-                GlobalScope.async {
-                    s1.position = shooterPositionA
-                    Thread.sleep(shootDelay)
-                    s1.position = shooterPositionB
-                    Thread.sleep(shootDelay * 3)
-                    p1rb = false
+            active {
+                when {
+                    gamepad1.lt >= 0.5 -> {
+                        m6.power(intakePowerA * 0.6)
+                        m8.power(intakePowerB * 0.6)
+                    }
+
+                    +gamepad1.lb -> {
+                        m6.power(-intakePowerA)
+                        m8.power(-intakePowerB)
+                    }
+
+                    else -> {
+                        m6.power(0.0)
+                        m8.power(0.0)
+                    }
                 }
             }
-        } else
-            p1rb = false
+
+            active {
+                if (gamepad1.rt >= 0.5)
+                    m5.power(shooterPower)
+                else
+                    m5.power(0.0)
+            }
+
+            click(Gamepad::rb) {
+                GlobalScope.async {
+                    while (+gamepad1.rb) {
+                        s1.position = shooterPositionA
+                        Thread.sleep(shootDelay)
+
+                        s1.position = shooterPositionB
+                        Thread.sleep(shootDelay * 3)
+                    }
+                }
+            }
+        }
     }
 }

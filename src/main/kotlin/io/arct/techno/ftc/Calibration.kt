@@ -1,7 +1,9 @@
 package io.arct.techno.ftc
 
 import io.arct.ftc.eventloop.OperationMode
+import io.arct.ftc.hardware.input.Gamepad
 import io.arct.rl.hardware.input.Controller
+import io.arct.rl.hardware.input.DPad
 import io.arct.rl.hardware.motors.Motor
 import io.arct.rl.hardware.motors.Servo
 import io.arct.techno.ftc.util.CalibrationData
@@ -40,67 +42,64 @@ class Calibration : OperationMode() {
     var rb = false
 
     override suspend fun loop() {
-        if (done) {
+        if (done)
             return
+
+        s3.position = current
+
+        gamepad {
+            click(Gamepad::a) {
+                PersistentObject.save(CalibrationData(
+                    shooterHigh = a,
+                    shooterPower = b
+                ), "/sdcard/calibration.dat")
+
+                done = true
+                log.add("Done! Please exit the program.").update()
+            }
+
+            click(Gamepad::b) {
+                mode = !mode
+            }
+
+            click(DPad::up) {
+                current += 0.01
+            }
+
+            click(DPad::down) {
+                current -= 0.01
+            }
+
+            click(DPad::left) {
+                current -= 0.1
+            }
+
+            click(DPad::right) {
+                current += 0.1
+            }
+
+            active {
+                m5.power(if (gamepad.rt >= 0.5) -1.0 else 0.0)
+            }
+
+            click(Gamepad::rb) {
+                GlobalScope.async {
+                    while (+gamepad.rb) {
+                        s1.position = shooterPositionA
+                        Thread.sleep(shootDelay)
+
+                        s1.position = shooterPositionB
+                        Thread.sleep(shootDelay * 3)
+                    }
+                }
+            }
         }
-
-        if (gamepad.a) {
-            PersistentObject.save(CalibrationData(
-                shooterHigh = a,
-                shooterPower = b
-            ), "/sdcard/calibration.dat")
-
-            done = true
-            log.add("Done! Please exit the program.").update()
-        }
-
-        if (gamepad.b) {
-            if (!bb) mode = !mode
-            bb = true
-        } else bb = false
-
-        if (gamepad.dpad.up) {
-            if (!u) current += 0.01
-            u = true
-        } else u = false
-
-        if (gamepad.dpad.down) {
-            if (!d) current -= 0.01
-            d = true
-        } else d = false
-
-        if (gamepad.dpad.left) {
-            if (!l) current -= 0.1
-            l = true
-        } else l = false
-
-        if (gamepad.dpad.right) {
-            if (!r) current += 0.1
-            r = true
-        } else r = false
 
         if (current > 1)
             current = 1.0
 
         if (current < -1)
             current = -1.0
-
-        m5.power(if (gamepad.rt >= 0.5) -1.0 else 0.0)
-        s3.position = current
-
-        if (gamepad.rb) {
-            if (!rb) {
-                rb = true
-
-                GlobalScope.async {
-                    s1.position = shooterPositionA
-                    Thread.sleep(shootDelay)
-                    s1.position = shooterPositionB
-                    Thread.sleep(shootDelay * 3)
-                    rb = false
-                }
-            }
-        } else rb = false
 
         log
             .add("Currently Calibrating ${if (mode) "High Goal" else "PowerShot Target"}")
