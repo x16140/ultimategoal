@@ -34,9 +34,9 @@ sourceSets {
 }
 
 dependencies {
-    implementation "io.arct:rl:0.1.1"
-    implementation "io.arct:ftclib:0.1.1"
-    kapt "io.arct:ftcprocessor:0.1.1"
+    implementation "io.arct:rl:0.1.4"
+    implementation "io.arct:ftclib:0.1.4"
+    kapt "io.arct:ftcprocessor:0.1.4"
 
     implementation fileTree(dir: 'libs', include: [ '*.jar' ])
 
