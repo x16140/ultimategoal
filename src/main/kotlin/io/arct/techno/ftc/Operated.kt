@@ -9,15 +9,13 @@ import io.arct.rl.hardware.motors.Motor
 import io.arct.rl.hardware.motors.Servo
 import io.arct.rl.robot.Robot
 import io.arct.rl.robot.drive.MecanumDrive
-import io.arct.rl.robot.position.NoPositioning
-import io.arct.rl.robot.robot
 import io.arct.rl.units.*
 import io.arct.techno.ftc.util.CalibrationData
 import io.arct.techno.ftc.util.PersistentObject
 import io.arct.techno.ftc.util.mecanum
+import io.arct.techno.ftc.util.robot
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlin.coroutines.coroutineContext
 
 @OperationMode.Register(Type.Operated, name = "TeleOp")
 class Operated : OperationMode() {
@@ -34,21 +32,14 @@ class Operated : OperationMode() {
     private val gamepad1 by Controller
 
     val drive: MecanumDrive = mecanum(this)
-
-    val robot: Robot = robot {
-        using drive       drive
-        using positioning NoPositioning(true)
-    }
+    val robot: Robot = robot(this, odometry = false)
 
     val spotTurnVelocity = -1.0
     val precisionSpotTurnVelocity = -0.3
     val wobbleSpeed = 0.5
     val precisionWobbleSpeed = 0.3
-    val shooterHeightA = 0.95
-    val shooterHeightB = 1.0
     val gripperPositionA = -0.8
     val gripperPositionB = 0.8
-    val gripperPositionC = -0.6
     val shooterPositionA = 0.7
     val shooterPositionB = 1.0
     val intakePowerA = 1.0
@@ -58,66 +49,28 @@ class Operated : OperationMode() {
 
     val calibration: CalibrationData = PersistentObject.load("/sdcard/calibration.dat")
 
-    val mecanum = MecanumControl(drive, Controller::left)
-    val arcade = ArcadeControl(drive, Controller::right)
-//    val pmecanum = MecanumControl(drive, Controller::left, maxSpeed = .3)
-//    val parcade = ArcadeControl(drive, Controller::right, maxSpeed = .3)
-    val imecanum = MecanumControl(drive, Controller::left, invertX = true, invertY = true)
-    val iarcade = ArcadeControl(drive, Controller::right, invertY = true)
-//    val ipmecanum = MecanumControl(drive, Controller::left, maxSpeed = .3, invertX = true, invertY = true)
-//    val iparcade = ArcadeControl(drive, Controller::right, maxSpeed = .3, invertY = true)
+    val mecanum = MecanumControl(drive, Controller::left, invertX = true, invertY = true)
+    val arcade = ArcadeControl(drive, Controller::right, invertY = true)
 
     var precisionDrive = false
-    var gripper = false
-    var variableShooter = false
-    var invertDrive = !false
 
     var p0a = false
-    var p0b = false
-    var p1a = false
-    var p1y = false
     var p1rb = false
-    var p1b = false
 
     override suspend fun loop() {
-        // Gamepad 1
-//        if (precisionDrive) {
-////            val useMecanum = if (invertDrive) ipmecanum else pmecanum
-////            val useArcade = if (invertDrive) iparcade else parcade
-//
-//            useMecanum.apply(gamepad0)
-//
-//            if (gamepad0.left.origin)
-//                useArcade.apply(gamepad0)
-//        } else {
-//            val useMecanum = if (invertDrive) imecanum else mecanum
-//            val useArcade = if (invertDrive) iarcade else arcade
-//
-//            useMecanum.apply(gamepad0)
-//
-//            if (gamepad0.left.origin)
-//                useArcade.apply(gamepad0)
-//        }
-
         val turn = gamepad0.lt != .0 || gamepad0.rt != .0 || gamepad0.lb || gamepad0.rb
 
         if (!turn)
-            imecanum.apply(gamepad0)
+            mecanum.apply(gamepad0)
 
         if (gamepad0.left.origin && !turn)
-            iarcade.apply(gamepad0)
+            arcade.apply(gamepad0)
 
         if (gamepad0.a) if (!p0a) {
             precisionDrive = !precisionDrive
             p0a = true
         } else
             p0a = false
-
-//        if (gamepad0.b) if (!p0b) {
-//            invertDrive = !invertDrive
-//            p0b = true
-//        } else
-//            p0b = false
 
         if (gamepad0.lt != .0 || gamepad0.rt != .0)
             robot.rotate(robot.velocity * (gamepad0.lt * spotTurnVelocity + gamepad0.rt * -spotTurnVelocity))
@@ -130,26 +83,6 @@ class Operated : OperationMode() {
 
         // Gamepad 2
         m7.power(gamepad1.left.y * wobbleSpeed + gamepad1.right.y * precisionWobbleSpeed)
-
-//        if (gamepad1.a) if (!p1a) {
-//            gripper = !gripper
-//            p1a = true
-//        } else
-//            p1a = false
-
-//        if (gamepad1.y) if (!p1y) {
-//            variableShooter = !variableShooter
-//            p1y = true
-//        } else
-//            p1y = false
-
-//        s2.position = when (gripper) {
-//            0 -> gripperPositionA
-//            1 -> gripperPositionB
-//            2 -> gripperPositionC
-//
-//            else -> gripperPositionA
-//        }
 
         s2.position = if (gamepad1.y) gripperPositionA else gripperPositionB
         s3.position = if (gamepad1.x) calibration.shooterPower else calibration.shooterHigh
