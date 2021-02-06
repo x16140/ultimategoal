@@ -65,20 +65,20 @@ class Operated : OperationMode() {
                     arcade.apply(gamepad0)
             }
 
-            active(Gamepad::lt, .0) {
+            active(Controller::lt, .0) {
                 robot.rotate(robot.velocity * (gamepad0.lt * spotTurnVelocity))
             }
 
-            active(Gamepad::rt, .0) {
+            active(Controller::rt, .0) {
                 robot.rotate(robot.velocity * (gamepad0.rt * -spotTurnVelocity))
             }
 
-            active {
-                if (+gamepad0.lb)
-                    robot.rotate(robot.velocity * precisionSpotTurnVelocity)
+            active(Controller::lb) {
+                robot.rotate(robot.velocity * precisionSpotTurnVelocity)
+            }
 
-                if (+gamepad0.rb)
-                    robot.rotate(robot.velocity * -precisionSpotTurnVelocity)
+            active(Controller::rb) {
+                robot.rotate(robot.velocity * -precisionSpotTurnVelocity)
             }
         }
 
@@ -118,7 +118,7 @@ class Operated : OperationMode() {
                     m5.power(0.0)
             }
 
-            click(Gamepad::rb) {
+            click(Controller::rb) {
                 GlobalScope.async {
                     while (+gamepad1.rb) {
                         s1.position = shooterPositionA

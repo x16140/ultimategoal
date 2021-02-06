@@ -48,7 +48,7 @@ class Calibration : OperationMode() {
         s3.position = current
 
         gamepad {
-            click(Gamepad::a) {
+            click(Controller::a) {
                 PersistentObject.save(CalibrationData(
                     shooterHigh = a,
                     shooterPower = b
@@ -58,7 +58,7 @@ class Calibration : OperationMode() {
                 log.add("Done! Please exit the program.").update()
             }
 
-            click(Gamepad::b) {
+            click(Controller::b) {
                 mode = !mode
             }
 
@@ -82,7 +82,7 @@ class Calibration : OperationMode() {
                 m5.power(if (gamepad.rt >= 0.5) -1.0 else 0.0)
             }
 
-            click(Gamepad::rb) {
+            click(Controller::rb) {
                 GlobalScope.async {
                     while (+gamepad.rb) {
                         s1.position = shooterPositionA
