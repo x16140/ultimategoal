@@ -32,7 +32,6 @@ class Operated : OperationMode() {
     private val gamepad0 by Controller
     private val gamepad1 by Controller
 
-    val drive: MecanumDrive = mecanum(this)
     val robot: Robot = robot(this, odometry = false)
 
     val spotTurnVelocity = -1.0
@@ -44,14 +43,14 @@ class Operated : OperationMode() {
     val shooterPositionA = 0.7
     val shooterPositionB = 1.0
     val intakePowerA = 1.0
-    val intakePowerB = 0.85
+    val intakePowerB = 0.70
     val shooterPower = -1.0
     val shootDelay = 50L
 
     val calibration: CalibrationData = PersistentObject.load("/sdcard/calibration.dat")
 
-    val mecanum = MecanumControl(drive, Controller::left, invertX = true, invertY = true)
-    val arcade = ArcadeControl(drive, Controller::right, invertY = true)
+    val mecanum = MecanumControl(robot, Controller::left, invertX = true, invertY = true)
+    val arcade = ArcadeControl(robot, Controller::right, invertY = true)
 
     override suspend fun loop() {
         gamepad0 {

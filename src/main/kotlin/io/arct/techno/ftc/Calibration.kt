@@ -15,6 +15,8 @@ import kotlinx.coroutines.async
 class Calibration : OperationMode() {
     val gamepad = Controller.get("gamepad0")
 
+    val initial: CalibrationData = PersistentObject.load("/sdcard/calibration.dat")
+
     val m5 by Motor
     val s3 by Servo
     val s1 by Servo
@@ -31,15 +33,8 @@ class Calibration : OperationMode() {
     val shooterPositionB = 1.0
     val shootDelay = 50L
 
-    var a = 0.0
-    var b = 0.0
-
-    var bb = false
-    var u = false
-    var d = false
-    var l = false
-    var r = false
-    var rb = false
+    var a = initial.shooterHigh
+    var b = initial.shooterPower
 
     override suspend fun loop() {
         if (done)

@@ -12,6 +12,11 @@ data class CalibrationData(
     val shooterPower: Double
 )
 
+@Serializable
+data class Secret(
+    val vuforia: String
+)
+
 object PersistentObject {
     inline fun<reified T> save(value: T, path: String): Unit =
         File(path).writeText(Json.encodeToString(value), charset("utf-8"))
