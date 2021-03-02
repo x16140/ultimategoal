@@ -11,6 +11,7 @@ import io.arct.rl.hardware.motors.Servo
 import io.arct.rl.robot.Robot
 import io.arct.rl.robot.drive.MecanumDrive
 import io.arct.rl.units.*
+import io.arct.techno.ftc.jank.JankDrive
 import io.arct.techno.ftc.util.CalibrationData
 import io.arct.techno.ftc.util.PersistentObject
 import io.arct.techno.ftc.util.mecanum
@@ -52,16 +53,22 @@ class Operated : OperationMode() {
     val mecanum = MecanumControl(robot, Controller::left, invertX = true, invertY = true)
     val arcade = ArcadeControl(robot, Controller::right, invertY = true)
 
+    val jank = JankDrive(robot)
+
     override suspend fun loop() {
         gamepad0 {
+//            active {
+//                val turn = gamepad0.lt != .0 || gamepad0.rt != .0 || +gamepad0.lb || +gamepad0.rb
+//
+//                if (!turn)
+//                    mecanum.apply(gamepad0)
+//
+//                if (gamepad0.left.origin && !turn)
+//                    arcade.apply(gamepad0)
+//            }
+
             active {
-                val turn = gamepad0.lt != .0 || gamepad0.rt != .0 || +gamepad0.lb || +gamepad0.rb
-
-                if (!turn)
-                    mecanum.apply(gamepad0)
-
-                if (gamepad0.left.origin && !turn)
-                    arcade.apply(gamepad0)
+                jank.apply(gamepad0)
             }
 
             active(Controller::lt, .0) {
