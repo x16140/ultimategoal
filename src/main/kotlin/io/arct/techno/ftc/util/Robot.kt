@@ -15,9 +15,9 @@ fun robot(op: OperationMode, odometry: Boolean = true): Robot = io.arct.rl.robot
 
     if (odometry) {
         val fn: OperationMode.() -> Pair<Pair<DistanceEncoder, DistanceEncoder>, DistanceEncoder> = {
-            val a = Motor.get("m1").encoder.invert().asDistanceEncoder(4.cm) // y right
-            val b = Motor.get("m6").encoder.invert().asDistanceEncoder(4.cm) // y left
-            val c = Motor.get("m5").encoder.asDistanceEncoder(4.cm) // x
+            val a = Motor.get("m1", ticksPerDeg = 13.2159).encoder.invert().asDistanceEncoder(4.cm) // y right
+            val b = Motor.get("m5", ticksPerDeg = 13.2159).encoder.invert().asDistanceEncoder(4.cm) // y left
+            val c = Motor.get("m6", ticksPerDeg = 1.4706).encoder.asDistanceEncoder(4.cm) // x
 
             a to b to c
         }
