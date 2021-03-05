@@ -8,10 +8,8 @@ import io.arct.rl.robot.Robot
 import io.arct.rl.units.*
 import io.arct.techno.ftc.cv.RingDetector
 import io.arct.techno.ftc.cv.RingState
-import io.arct.techno.ftc.util.CalibrationData
-import io.arct.techno.ftc.util.PersistentObject
-import io.arct.techno.ftc.util.Secret
-import io.arct.techno.ftc.util.robot
+import io.arct.techno.ftc.jank.JankAdjustOdometry
+import io.arct.techno.ftc.util.*
 
 @OperationMode.Register(OperationMode.Type.Autonomous, "Autonomous")
 class Auto : LinearOperationMode() {
@@ -25,8 +23,9 @@ class Auto : LinearOperationMode() {
     private val secrets: Secret = PersistentObject.load("/sdcard/secrets.dat")
     private val calibration: CalibrationData = PersistentObject.load("/sdcard/calibration.dat")
 
-    private val robot: Robot = robot(this)
+    private val robot: Robot = robot()
     private val detector = RingDetector(this, secrets.vuforia)
+    private val adjust = JankAdjustOdometry(robot, mecanum, odometers)
 
     val shooterPower = -1.0
     val shootDelay = 500L
@@ -41,7 +40,10 @@ class Auto : LinearOperationMode() {
     override suspend fun run() {
         val state = detector.scan()
 
+        adjust.reset()
         robot.move(Angle.Forward, 145.cm, 1.mps)
+        adjust.adjust(Angle.Forward, 145.cm)
+        
         robot.move(Angle.Left, 240.cm, 1.mps)
 
         shoot(3)

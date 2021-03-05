@@ -18,7 +18,7 @@ class AutoL3 : LinearOperationMode() {
     private val s2 by Servo
 
     private val robot: Robot = robot {
-        using drive       mecanum(this@AutoL3)
+        using drive       mecanum
         using positioning NoPositioning(errorOnAccess = true)
     }
 

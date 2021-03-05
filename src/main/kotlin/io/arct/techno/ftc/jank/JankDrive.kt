@@ -62,9 +62,3 @@ class LessJankDrive(drive: IDrive) : Control(drive) {
         }
     }
 }
-
-// there is no mecanum part
-//it just alters mecanum
-//like with the left joystick
-//the bot can't move it can only spot turn
-//bascailly i just want rotation with translation, imo this is the easiest way to do it

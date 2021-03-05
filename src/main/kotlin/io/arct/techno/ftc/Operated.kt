@@ -35,7 +35,7 @@ class Operated : OperationMode() {
     private val gamepad0 by Controller
     private val gamepad1 by Controller
 
-    val robot: Robot = robot(this, odometry = false)
+    val robot: Robot = robot(odometry = false)
 
     val spotTurnVelocity = -1.0
     val precisionSpotTurnVelocity = -0.3

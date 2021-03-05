@@ -18,7 +18,7 @@ import kotlinx.coroutines.async
 class RotationCalibration : OperationMode() {
     val gamepad = Controller.get("gamepad0")
 
-    val robot = robot(this)
+    val robot = robot()
     var value = 3.6923
 
     override suspend fun loop() {
