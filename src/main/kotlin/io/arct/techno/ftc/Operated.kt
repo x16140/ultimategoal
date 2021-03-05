@@ -12,6 +12,7 @@ import io.arct.rl.robot.Robot
 import io.arct.rl.robot.drive.MecanumDrive
 import io.arct.rl.units.*
 import io.arct.techno.ftc.jank.JankDrive
+import io.arct.techno.ftc.jank.LessJankDrive
 import io.arct.techno.ftc.util.CalibrationData
 import io.arct.techno.ftc.util.PersistentObject
 import io.arct.techno.ftc.util.mecanum
@@ -29,6 +30,7 @@ class Operated : OperationMode() {
     private val s1 by Servo
     private val s2 by Servo
     private val s3 by Servo
+    private val s4 by Servo
 
     private val gamepad0 by Controller
     private val gamepad1 by Controller
@@ -47,13 +49,15 @@ class Operated : OperationMode() {
     val intakePowerB = 0.70
     val shooterPower = -1.0
     val shootDelay = 50L
+    val stickPositionA = .05
+    val stickPositionB = .4
 
     val calibration: CalibrationData = PersistentObject.load("/sdcard/calibration.dat")
 
     val mecanum = MecanumControl(robot, Controller::left, invertX = true, invertY = true)
     val arcade = ArcadeControl(robot, Controller::right, invertY = true)
 
-    val jank = JankDrive(robot)
+    val jank = LessJankDrive(robot)
 
     override suspend fun loop() {
         gamepad0 {
@@ -115,6 +119,10 @@ class Operated : OperationMode() {
                         m8.power(0.0)
                     }
                 }
+            }
+
+            active {
+                s4.position = if (+gamepad1.b) stickPositionA else stickPositionB
             }
 
             active {
