@@ -40,10 +40,7 @@ class Auto : LinearOperationMode() {
     override suspend fun run() {
         val state = detector.scan()
 
-        adjust.reset()
         robot.move(Angle.Forward, 145.cm, 1.mps)
-        adjust.adjust(Angle.Forward, 145.cm)
-        
         robot.move(Angle.Left, 240.cm, 1.mps)
 
         shoot(3)
