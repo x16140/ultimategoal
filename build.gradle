@@ -34,9 +34,9 @@ sourceSets {
 }
 
 dependencies {
-    implementation "io.arct:rl:0.1.8"
-    implementation "io.arct:ftclib:0.1.8"
-    kapt "io.arct:ftcprocessor:0.1.8"
+    implementation "io.arct:rl:0.1.10"
+    implementation "io.arct:ftclib:0.1.10"
+    kapt "io.arct:ftcprocessor:0.1.10"
 
     implementation fileTree(dir: 'libs', include: [ '*.jar' ])
     implementation fileTree(dir: 'libs/android', include: [ '*.jar' ])

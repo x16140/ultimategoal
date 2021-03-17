@@ -8,6 +8,7 @@ import io.arct.rl.robot.position.NoPositioning
 import io.arct.rl.robot.position.TripleOdometry
 import io.arct.rl.units.cm
 import io.arct.rl.units.revpm
+import io.arct.techno.ftc.jank.MecanumCopyJank
 
 val OperationMode.odometers get() = Triple(
         Motor.get("m1", ticksPerDeg = 13.2159).encoder.invert().asDistanceEncoder(4.cm), // y right
@@ -26,7 +27,7 @@ fun OperationMode.robot(odometry: Boolean = true): Robot = io.arct.rl.robot.robo
     }
 }
 
-val OperationMode.mecanum: MecanumDrive get() {
+val OperationMode.mecanum: MecanumCopyJank get() {
     val m1 = Motor.get("m1", 435.revpm, 10.cm)
     val m2 = Motor.get("m2", 435.revpm, 10.cm)
     val m3 = Motor.get("m3", 435.revpm, 10.cm)
@@ -37,5 +38,5 @@ val OperationMode.mecanum: MecanumDrive get() {
     m3.halt = Motor.HaltBehavior.Brake
     m4.halt = Motor.HaltBehavior.Brake
 
-    return MecanumDrive(m4.invert(), m3.invert(), m1, m2)
+    return MecanumCopyJank(m4.invert(), m3.invert(), m1, m2)
 }

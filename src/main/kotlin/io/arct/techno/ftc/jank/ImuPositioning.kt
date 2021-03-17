@@ -1,6 +1,6 @@
 package io.arct.techno.ftc.jank
 
-import io.arct.ftc.hardware.sensors.Imu
+import io.arct.ftc.hardware.sensors.FImu
 import io.arct.rl.hardware.sensors.DistanceEncoder
 import io.arct.rl.robot.position.DynamicPositioning
 import io.arct.rl.robot.position.IPositioning
@@ -13,7 +13,7 @@ class ImuPositioning(
         private val y1: DistanceEncoder,
         private val y2: DistanceEncoder,
         private val x: DistanceEncoder,
-        private val imu: Imu,
+        private val imu: FImu,
         private val imuAxis: (Orientation) -> Float,
         private val invert: Boolean,
         private val diameter: Distance

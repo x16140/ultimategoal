@@ -41,8 +41,8 @@ class Operated : OperationMode() {
     val precisionSpotTurnVelocity = -0.3
     val wobbleSpeed = 0.5
     val precisionWobbleSpeed = 0.3
-    val gripperPositionA = -0.8
-    val gripperPositionB = 0.8
+    val gripperPositionB = -0.8
+    val gripperPositionA = 0.8
     val shooterPositionA = 0.7
     val shooterPositionB = 1.0
     val intakePowerA = 1.0
@@ -139,7 +139,7 @@ class Operated : OperationMode() {
                         Thread.sleep(shootDelay)
 
                         s1.position = shooterPositionB
-                        Thread.sleep(shootDelay * 3)
+                        Thread.sleep(500L)
                     }
                 }
             }
