@@ -11,7 +11,7 @@ import io.arct.rl.robot.robot
 import io.arct.rl.units.*
 import io.arct.techno.ftc.util.mecanum
 
-@OperationMode.Register(Type.Autonomous, "Auto (League 3)")
+@OperationMode.Register(Type.Autonomous, "Auto (L3)")
 class AutoL3 : LinearOperationMode() {
     private val shooter = Motor.get("m5", 5800.revpm)
     private val s1 by Servo

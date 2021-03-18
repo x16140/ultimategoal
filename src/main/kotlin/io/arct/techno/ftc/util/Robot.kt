@@ -1,11 +1,12 @@
 package io.arct.techno.ftc.util
 
+import com.qualcomm.hardware.bosch.BNO055IMU
 import io.arct.ftc.eventloop.OperationMode
+import io.arct.ftc.hardware.sensors.FImu
 import io.arct.rl.hardware.motors.Motor
 import io.arct.rl.robot.Robot
-import io.arct.rl.robot.drive.MecanumDrive
 import io.arct.rl.robot.position.NoPositioning
-import io.arct.rl.robot.position.TripleOdometry
+import io.arct.rl.robot.position.OdometryPositioning
 import io.arct.rl.units.cm
 import io.arct.rl.units.revpm
 import io.arct.techno.ftc.jank.MecanumCopyJank
@@ -16,12 +17,17 @@ val OperationMode.odometers get() = Triple(
         Motor.get("m6", ticksPerDeg = 1.4706).encoder.asDistanceEncoder(4.cm) // x
 )
 
+val OperationMode.imu get() = FImu.get("imu").init(
+    accelerationUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC,
+    angleUnit = BNO055IMU.AngleUnit.DEGREES
+)
+
 fun OperationMode.robot(odometry: Boolean = true): Robot = io.arct.rl.robot.robot {
     using drive mecanum
 
     using positioning if (odometry) {
         val (y1, y2, x) = odometers
-        TripleOdometry(y1, y2, x, 10.cm)
+        OdometryPositioning(y1, y2, x, imu, angle = { -it.x }).spawn()
     } else {
         NoPositioning(true)
     }

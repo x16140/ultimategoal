@@ -15,8 +15,8 @@ import io.arct.techno.ftc.jank.JankAdjustOdometry
 import io.arct.techno.ftc.util.*
 import kotlin.math.abs
 
-@OperationMode.Register(OperationMode.Type.Autonomous, "Autonomous (Pray)")
-class PrayAuto : LinearOperationMode() {
+@OperationMode.Register(OperationMode.Type.Autonomous, "Auto (L4)")
+class AutoL4 : LinearOperationMode() {
     private val shooter = Motor.get("m5", 5800.revpm)
     private val wobble = Motor.get("m7", 223.revpm)
 
@@ -44,8 +44,8 @@ class PrayAuto : LinearOperationMode() {
     override suspend fun run() {
         val state = detector.scan()
 
-//        dynMove(145.cm, 1.mps)
-        robot.move(Angle.Forward, 145.cm, 1.mps)
+        dynMove(145.cm, 1.mps)
+//        robot.move(Angle.Forward, 145.cm, 1.mps)
         robot.move(Angle.Left, 240.cm, 1.mps)
 
         shoot(3)
@@ -53,20 +53,20 @@ class PrayAuto : LinearOperationMode() {
         when (state) {
             RingState.None -> {
                 robot.move(Angle.Left, 100.cm, 1.mps)
-//                dynMove(50.cm, 1.mps)
-                robot.move(Angle.Forward, 50.cm, 1.mps)
+                dynMove(50.cm, 1.mps)
+//                robot.move(Angle.Forward, 50.cm, 1.mps)
             }
 
             RingState.Partial -> {
-                robot.move(Angle.Right, (140 + 160 - 60 + 100).cm, 1.mps)
-//                dynMove((60 + 50).cm, 1.mps)
-                robot.move(Angle.Forward, (60 + 50).cm, 1.mps)
+                robot.move(Angle.Right, (140 + 160 - 60).cm, 1.mps)
+                dynMove((60 + 50).cm, 1.mps)
+//                robot.move(Angle.Forward, (60 + 50).cm, 1.mps)
             }
 
             RingState.Full -> {
                 robot.move(Angle.Left, 100.cm, 1.mps)
-//                dynMove((80 + 50).cm, 1.mps)
-                robot.move(Angle.Forward, (80 + 50).cm, 1.mps)
+                dynMove((80 + 50).cm, 1.mps)
+//                robot.move(Angle.Forward, (80 + 50).cm, 1.mps)
 
                 robot.move(Angle.Forward, 1.mps)
                 Thread.sleep(1000L)
