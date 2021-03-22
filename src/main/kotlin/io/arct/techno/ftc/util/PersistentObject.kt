@@ -9,7 +9,8 @@ import java.io.File
 @Serializable
 data class CalibrationData(
     val shooterHigh: Double,
-    val shooterPower: Double
+    val shooterPower: Double,
+    val shootDelay: Long
 )
 
 @Serializable

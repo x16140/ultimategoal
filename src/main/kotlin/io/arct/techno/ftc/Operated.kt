@@ -42,7 +42,7 @@ class Operated : OperationMode() {
     val shooterPositionA = 0.7
     val shooterPositionB = 1.0
     val intakePowerA = 1.0
-    val intakePowerB = 0.70
+    val intakePowerB = 1.0
     val shooterPower = -1.0
     val shootDelay = 50L
     val stickPositionA = .05
@@ -56,8 +56,7 @@ class Operated : OperationMode() {
     val jank = LessJankDrive(robot)
 
     override suspend fun loop() {
-//        log.add("(${robot.position.x}, ${robot.position.y}) @ ${robot.rotation}").update()
-
+        var stick = false
         gamepad0 {
 //            active {
 //                val turn = gamepad0.lt != .0 || gamepad0.rt != .0 || +gamepad0.lb || +gamepad0.rb
@@ -71,6 +70,11 @@ class Operated : OperationMode() {
 
             active {
                 jank.apply(gamepad0)
+            }
+
+            active {
+                if (+gamepad0.a)
+                    stick = true
             }
 
             active(Controller::lt, .0) {
@@ -120,7 +124,8 @@ class Operated : OperationMode() {
             }
 
             active {
-                s4.position = if (+gamepad1.b) stickPositionA else stickPositionB
+                if (+gamepad1.b)
+                    stick = true
             }
 
             active {
@@ -137,10 +142,12 @@ class Operated : OperationMode() {
                         Thread.sleep(shootDelay)
 
                         s1.position = shooterPositionB
-                        Thread.sleep(500L)
+                        Thread.sleep(calibration.shootDelay)
                     }
                 }
             }
         }
+
+        s4.position = if (stick) stickPositionA else stickPositionB
     }
 }
