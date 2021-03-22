@@ -27,7 +27,7 @@ class AutoL4 : LinearOperationMode() {
     private val secrets: Secret = PersistentObject.load("/sdcard/secrets.dat")
     private val calibration: CalibrationData = PersistentObject.load("/sdcard/calibration.dat")
 
-    private val robot: Robot = robot()
+    private val robot: Robot = robotL4()
     private val detector = RingDetector(this, secrets.vuforia)
 //    private val adjust = JankAdjustOdometry(robot, mecanum, odometers)
 

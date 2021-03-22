@@ -27,7 +27,7 @@ class Calibration : OperationMode() {
 
     var done = false
 
-    var mode = false
+    var mode = true
 
     val shooterPositionA = 0.7
     val shooterPositionB = 1.0
@@ -35,6 +35,7 @@ class Calibration : OperationMode() {
 
     var a = initial.shooterHigh
     var b = initial.shooterPower
+    var sdl = initial.shootDelay ?: 250L
 
     override suspend fun loop() {
         if (done)
@@ -46,7 +47,8 @@ class Calibration : OperationMode() {
             click(Controller::a) {
                 PersistentObject.save(CalibrationData(
                     shooterHigh = a,
-                    shooterPower = b
+                    shooterPower = b,
+                    shootDelay = sdl
                 ), "/sdcard/calibration.dat")
 
                 done = true
@@ -73,6 +75,14 @@ class Calibration : OperationMode() {
                 current += 0.1
             }
 
+            click(Controller::x) {
+                sdl -= 50L
+            }
+
+            click(Controller::y) {
+                sdl += 50L
+            }
+
             active {
                 m5.power(if (gamepad.rt >= 0.5) -1.0 else 0.0)
             }
@@ -84,7 +94,7 @@ class Calibration : OperationMode() {
                         Thread.sleep(shootDelay)
 
                         s1.position = shooterPositionB
-                        Thread.sleep(shootDelay * 3)
+                        Thread.sleep(sdl)
                     }
                 }
             }
@@ -99,6 +109,8 @@ class Calibration : OperationMode() {
         log
             .add("Currently Calibrating ${if (mode) "High Goal" else "PowerShot Target"}")
             .add("Value: $current")
+            .add("")
+            .add("Shoot Delay: ${sdl}ms")
             .update()
     }
 }
