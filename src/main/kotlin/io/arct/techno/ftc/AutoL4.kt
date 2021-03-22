@@ -5,13 +5,11 @@ import io.arct.ftc.eventloop.OperationMode
 import io.arct.rl.hardware.motors.Motor
 import io.arct.rl.hardware.motors.Servo
 import io.arct.rl.robot.Robot
-import io.arct.rl.robot.drive.MecanumDrive
 import io.arct.rl.robot.position.DynamicPositioning
 import io.arct.rl.robot.position.TripleOdometry
 import io.arct.rl.units.*
 import io.arct.techno.ftc.cv.RingDetector
 import io.arct.techno.ftc.cv.RingState
-import io.arct.techno.ftc.jank.JankAdjustOdometry
 import io.arct.techno.ftc.util.*
 import kotlin.math.abs
 

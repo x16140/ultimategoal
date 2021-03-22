@@ -5,16 +5,17 @@ import io.arct.ftc.eventloop.OperationMode
 import io.arct.ftc.hardware.sensors.FImu
 import io.arct.rl.hardware.motors.Motor
 import io.arct.rl.robot.Robot
+import io.arct.rl.robot.position.ImuPositioning
 import io.arct.rl.robot.position.NoPositioning
 import io.arct.rl.robot.position.OdometryPositioning
-import io.arct.rl.units.cm
-import io.arct.rl.units.revpm
+import io.arct.rl.units.*
+import io.arct.techno.ftc.jank.JankPositioning
 import io.arct.techno.ftc.jank.MecanumCopyJank
 
 val OperationMode.odometers get() = Triple(
-        Motor.get("m1", ticksPerDeg = 13.2159).encoder.invert().asDistanceEncoder(4.cm), // y right
-        Motor.get("m5", ticksPerDeg = 13.2159).encoder.invert().asDistanceEncoder(4.cm), // y left
-        Motor.get("m6", ticksPerDeg = 1.4706).encoder.asDistanceEncoder(4.cm) // x
+        Motor.get("m1", ticksPerDeg = 12.0).encoder.invert().asDistanceEncoder(4.cm), // y right
+        Motor.get("m5", ticksPerDeg = 12.0).encoder.invert().asDistanceEncoder(4.cm), // y left
+        Motor.get("m6", ticksPerDeg = 12.0).encoder.asDistanceEncoder(4.cm) // x
 )
 
 val OperationMode.imu get() = FImu.get("imu").init(
@@ -27,7 +28,8 @@ fun OperationMode.robot(odometry: Boolean = true): Robot = io.arct.rl.robot.robo
 
     using positioning if (odometry) {
         val (y1, y2, x) = odometers
-        OdometryPositioning(y1, y2, x, imu, angle = { -it.x }).spawn()
+//        OdometryPositioning(y1, y2, x, imu, angle = { -it.x }).spawn()
+        JankPositioning(y1, y2, x, r = 19.5.cm, rb = 15.2.cm).spawn()
     } else {
         NoPositioning(true)
     }

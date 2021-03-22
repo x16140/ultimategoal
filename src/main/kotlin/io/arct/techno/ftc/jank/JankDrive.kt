@@ -11,24 +11,6 @@ import io.arct.rl.units.Velocity
 import io.arct.rl.units.deg
 import kotlin.math.*
 
-class JankDrive(drive: IDrive) : Control(drive) {
-    private var state : Boolean = false
-    override fun apply(controller: Controller) {
-        val joystick = controller.left
-
-        if (state) {
-            drive.move(
-                    Angle.fromCoordinates(joystick.x, -joystick.y) ?: return,
-                    drive.velocity * min(sqrt(joystick.x.pow(2) + joystick.y.pow(2)), 1.0)
-            )
-        } else {
-            drive.rotate(drive.velocity * controller.right.x)
-        }
-
-        state = !state
-    }
-}
-
 class LessJankDrive(drive: IDrive) : Control(drive) {
     override fun apply(controller: Controller) {
         val joystick = controller.left

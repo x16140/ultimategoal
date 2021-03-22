@@ -2,20 +2,16 @@ package io.arct.techno.ftc
 
 import io.arct.ftc.eventloop.OperationMode
 import io.arct.ftc.eventloop.OperationMode.Type
-import io.arct.ftc.hardware.input.Gamepad
 import io.arct.rl.control.ArcadeControl
 import io.arct.rl.control.MecanumControl
 import io.arct.rl.hardware.input.Controller
 import io.arct.rl.hardware.motors.Motor
 import io.arct.rl.hardware.motors.Servo
 import io.arct.rl.robot.Robot
-import io.arct.rl.robot.drive.MecanumDrive
 import io.arct.rl.units.*
-import io.arct.techno.ftc.jank.JankDrive
 import io.arct.techno.ftc.jank.LessJankDrive
 import io.arct.techno.ftc.util.CalibrationData
 import io.arct.techno.ftc.util.PersistentObject
-import io.arct.techno.ftc.util.mecanum
 import io.arct.techno.ftc.util.robot
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -60,6 +56,8 @@ class Operated : OperationMode() {
     val jank = LessJankDrive(robot)
 
     override suspend fun loop() {
+//        log.add("(${robot.position.x}, ${robot.position.y}) @ ${robot.rotation}").update()
+
         gamepad0 {
 //            active {
 //                val turn = gamepad0.lt != .0 || gamepad0.rt != .0 || +gamepad0.lb || +gamepad0.rb
