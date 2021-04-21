@@ -47,15 +47,21 @@ class RingDetector(
         it.frameQueueCapacity = 5
     }
 
-    fun scan(): RingState {
+    fun scan(save: Boolean = false): RingState {
         val frame = vuforia.frameQueue.take()
         val bitmap = vuforia.convertFrameToBitmap(frame)!!
         frame.close()
 
-//        save(bitmap, "full")
+        if (save)
+            save(bitmap, "full")
 
         val (bottom, top) = rings.mapIndexed { i, it ->
-            Bitmap.createBitmap(bitmap, it.x, it.y, it.width, it.height).orange >= (1 - tolerance)
+            val sub = Bitmap.createBitmap(bitmap, it.x, it.y, it.width, it.height)
+
+            if (save)
+                save(sub, "$i")
+
+            sub.orange >= (1 - tolerance)
         }
 
         return when {

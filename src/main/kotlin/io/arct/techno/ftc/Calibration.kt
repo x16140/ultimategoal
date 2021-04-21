@@ -60,27 +60,27 @@ class Calibration : OperationMode() {
             }
 
             click(DPad::up) {
-                current += 0.01
+                current += 0.001
             }
 
             click(DPad::down) {
-                current -= 0.01
+                current -= 0.001
             }
 
             click(DPad::left) {
-                current -= 0.1
+                current -= 0.01
             }
 
             click(DPad::right) {
-                current += 0.1
+                current += 0.01
             }
 
             click(Controller::x) {
-                sdl -= 50L
+                sdl -= 10L
             }
 
             click(Controller::y) {
-                sdl += 50L
+                sdl += 10L
             }
 
             active {

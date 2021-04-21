@@ -6,5 +6,5 @@ enum class RingState(val rings: Int) {
     Full(4);
 
     override fun toString(): String =
-        "RingState($rings)"
+        "$rings-Ring Initialization"
 }
