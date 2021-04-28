@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo
 import io.arct.ftc.eventloop.OperationMode
 import io.arct.ftc.hardware.motors.FBasicMotor
 import io.arct.ftc.hardware.sensors.FImu
+import io.arct.rl.extensions.normalize
 import io.arct.rl.hardware.motors.ContinuousServo
 import io.arct.rl.hardware.motors.Motor
 import io.arct.rl.hardware.motors.Servo
@@ -45,8 +46,8 @@ object Config {
     val intakeTop       = -.75 //0.8
 
     val shooter         = -1.0
-    val shootDelay      = 50L
-    val shootDelaySlow  = 750L
+    val shootDelay      = 100L
+    val shootDelaySlow  = 600L
 
     val stickDown       = -.05
     val stickUp         = .5
@@ -80,7 +81,7 @@ class Bot(
         }
 
         override fun shoot(n: Int) {
-            repeat(4) {
+            repeat(n) {
                 shoot()
                 Thread.sleep(Config.shootDelaySlow)
             }
@@ -212,15 +213,24 @@ class Bot(
             return this
         }
 
+        val y1 = hardware.y1.reset()
+        val y2 = hardware.y2.reset()
+
         do {
             DynamicPositioning.updateLinear(robot.positioning)
             val d = initial distance robot.position
 
-            move(direction, when {
+            val spd = when {
                 d <= accelDistance ->            d / accelDistance * (sp - minSpeedStart) + minSpeedStart
                 d <= td - decelDistance -> sp
                 else ->                          (td - d) / decelDistance * (sp - minSpeedEnd) + minSpeedEnd
-            }.mps)
+            }.mps
+
+            when {
+                y1.position > y2.position -> turn(spd, .2.mps)
+                y1.position < y2.position -> turn(spd, (-.2).mps)
+                else ->                      move(direction, spd)
+            }
         } while (d <= td)
 
         stop()
