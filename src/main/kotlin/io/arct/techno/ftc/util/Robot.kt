@@ -49,10 +49,11 @@ object Config {
     val shootDelaySlow  = 750L
 
     val stickDown       = -.05
-    val stickUp         = .4
+    val stickUp         = .5
 
-    val minSpeed = .25
-    val accel = 30.cm
+    val minSpeedStart = .5
+    val minSpeedEnd = .25
+    val accel = 15.cm
     val decel = 30.cm
 }
 
@@ -190,19 +191,24 @@ class Bot(
     }
 
     suspend fun accel(direction: Angle, distance: Distance, speed: Velocity): Bot {
-        move(direction, distance, speed)
-        return this
+//        move(direction, distance, speed)
+//        return this
 
         val initial = robot.position
 
-        val minSpeed = (velocity * Config.minSpeed).mps.value
+        val minSpeedStart = (velocity * Config.minSpeedStart).mps.value
+        val minSpeedEnd = (velocity * Config.minSpeedEnd).mps.value
+
         val accelDistance = Config.accel
         val decelDistance = Config.decel
 
+        val dr = 1.145
+        val td = distance * dr
+
         val sp = speed.mps.value
 
-        if (sp < minSpeed || distance < accelDistance + decelDistance) {
-            move(direction, distance, speed)
+        if (sp < minSpeedStart || td < accelDistance + decelDistance) {
+            move(direction, td, speed)
             return this
         }
 
@@ -211,11 +217,11 @@ class Bot(
             val d = initial distance robot.position
 
             move(direction, when {
-                d <= accelDistance ->            d / accelDistance * (sp - minSpeed) + minSpeed
-                d <= distance - decelDistance -> sp
-                else ->                          (distance - d) / decelDistance * (sp - minSpeed) + minSpeed
+                d <= accelDistance ->            d / accelDistance * (sp - minSpeedStart) + minSpeedStart
+                d <= td - decelDistance -> sp
+                else ->                          (td - d) / decelDistance * (sp - minSpeedEnd) + minSpeedEnd
             }.mps)
-        } while (d <= distance)
+        } while (d <= td)
 
         stop()
         return this

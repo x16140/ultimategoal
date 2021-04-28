@@ -40,6 +40,10 @@ class Auto : LinearOperationMode() {
         var done = false
 
         while (!done) gamepad0 {
+            active {
+                if (+gamepad0.rb) bot.wobble.releaseAsync() else bot.wobble.lockAsync()
+            }
+
             click(Controller::back) {
                 saveScan = true
                 done = true
@@ -99,7 +103,7 @@ class Auto : LinearOperationMode() {
 //                    .update()
 //        }
 
-        accel(Angle.Forward, 150.cm, f)
+        accel(Angle.Forward, 148.cm, f)
 
         shooter.revup()
         move(Angle.Left, 40.cm, s)
@@ -118,22 +122,22 @@ class Auto : LinearOperationMode() {
     }
 
     private suspend fun none() = with(bot) {
-        move(Angle.Forward, 55.cm, s)
+        move(Angle.Forward, 54.cm, s)
         move(Angle.Left, 22.cm, s)
 
         wobble.down()
         wobble.release()
         wobble.up()
 
-        move(Angle.Right, (56 - 40 - 5 + 5).cm, s)
+        move(Angle.Right, (56 - 40 - 5 + 5 - 5).cm, s)
         align()
-        accel(Angle.Backward, 147.cm, k)
+        accel(Angle.Backward, 151.cm, k)
 
         align()
         wobble.down()
         wobble.lock()
 
-        accel(Angle.Forward, 147.cm, f)
+        accel(Angle.Forward, 140.cm, f)
         move(Angle.Left, (56 - 38 + 15 - 5).cm, s)
 
         align()
@@ -145,8 +149,8 @@ class Auto : LinearOperationMode() {
     }
 
     private suspend fun partial() = with(bot) {
-        accel(Angle.Forward, 119.cm, f)
-        move(Angle.Right, 30.cm, s)
+        accel(Angle.Forward, 121.cm, f)
+        move(Angle.Right, 30.cm, k)
 
         align()
         wobble.down()
@@ -154,20 +158,21 @@ class Auto : LinearOperationMode() {
         wobble.up()
 
         align()
-        accel(Angle.Backward, (220 - 9 + 5).cm, k)
+        accel(Angle.Backward, (220 - 9 + 5 - 7 + 3 + 5 + 5).cm, k)
+        align()
 
         wobble.downAsync()                          // ----+
                                                     //     |
-        move(Angle.Left, (23 + 15 + 8 + 4).cm, s)   //     |
-        align()                                     //     |
+        move(Angle.Left, (23 + 15 + 8 + 4 - 3 + 3).cm, s)   //     |
+        // align()                                     //     |
                                                     //     |
         hardware.wobble.stop()                      // ----+
 
         wobble.lock()
 
-        move(Angle.Right, (38 + 4).cm, s)
+        move(Angle.Right, (38 + 4 - 3).cm, s)
         align()
-        accel(Angle.Forward, (200 - 9 + 5).cm, q)
+        accel(Angle.Forward, (200 - 9 + 5 - 7 + 3 + 5).cm, q)
 
         align()
         wobble.release()
@@ -179,30 +184,35 @@ class Auto : LinearOperationMode() {
     private suspend fun full() = with(bot) {
         move(Angle.Left, 35.cm, s)
 
-        accel(Angle.Forward, 150.cm, q)
-        move(Angle.Forward, s); Thread.sleep(500L); robot.stop()
+        accel(Angle.Forward, 152.cm, q)
+        move(Angle.Forward, f); Thread.sleep(300L); robot.stop()
 
         wobble.down()
-        wobble.lock()
+        wobble.release()
         wobble.up()
 
         move(Angle.Backward, 10.cm, q)
+        move(Angle.Right, 10.cm, f)
         align()
-        move(Angle.Right, 10.cm, s)
+
+        intake.intake()
 
         wobble.downAsync()                         // ---+
         accel(Angle.Backward, (242 - 5 + 5).cm, q) //    |
         hardware.wobble.stop()                     // ---+
 
+        intake.stop()
+
         align()
         wobble.lock()
-        move(Angle.Left, 5.cm, s)
+        move(Angle.Left, 5.cm, k)
         align()
 
         accel(Angle.Forward, (250 - 5 + 5).cm, q)
-        move(Angle.Forward, s); Thread.sleep(500L); robot.stop()
+        move(Angle.Forward, s); Thread.sleep(300L); robot.stop()
 
-        align()
+//        align((-10).deg)
+        rotate(12.deg, q)
         wobble.release()
         wobble.up()
 
