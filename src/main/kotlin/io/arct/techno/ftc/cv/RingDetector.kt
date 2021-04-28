@@ -16,7 +16,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class RingDetector(
-    private val program: OperationMode,
+    program: OperationMode,
     key: String,
     cameraDirection: VuforiaLocalizer.CameraDirection = VuforiaLocalizer.CameraDirection.FRONT,
 ) {
@@ -38,7 +38,11 @@ class RingDetector(
     }
 
     private val vuforia = ClassFactory.getInstance().createVuforia(VuforiaLocalizer.Parameters(
-            program.__get_sdk().hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", program.__get_sdk().hardwareMap.appContext.packageName)
+            program.__get_sdk().hardwareMap.appContext.resources.getIdentifier(
+                    "cameraMonitorViewId",
+                    "id",
+                    program.__get_sdk().hardwareMap.appContext.packageName
+            )
     ).also {
         it.vuforiaLicenseKey = key
         it.cameraDirection = cameraDirection
