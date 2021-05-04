@@ -109,7 +109,7 @@ class Auto : LinearOperationMode() {
         move(Angle.Left, 40.cm, s)
 
         align()
-        shooter.shoot(3)
+        shooter.shoot(4)
         shooter.revdown()
 
         when (state) {
@@ -149,7 +149,29 @@ class Auto : LinearOperationMode() {
     }
 
     private suspend fun partial() = with(bot) {
-        accel(Angle.Forward, 121.cm, f)
+        intake.intake()
+
+        move(Angle.Backward, 20.cm, hardware.m1.velocity * 0.4)
+        move(Angle.Backward, 30.cm, hardware.m1.velocity * 0.2)
+
+
+        shooter.revup()
+
+        move(Angle.Forward, 49.cm, s)
+        align()
+
+//        intake.stop()
+
+        align()
+        shooter.shoot(3)
+        shooter.revdown()
+
+
+        //
+
+//        move(Angle.Left, 20.cm, f)
+
+        accel(Angle.Forward, 111.cm, f)
         move(Angle.Right, 30.cm, k)
 
         align()
@@ -157,66 +179,129 @@ class Auto : LinearOperationMode() {
         wobble.release()
         wobble.up()
 
-        align()
-        accel(Angle.Backward, (220 - 9 + 5 - 7 + 3 + 5 + 5).cm, k)
-        align()
+        // go to line
 
-        wobble.downAsync()                          // ----+
-                                                    //     |
-        move(Angle.Left, (23 + 15 + 8 + 4 - 3 + 3).cm, s)   //     |
-        // align()                                     //     |
-                                                    //     |
-        hardware.wobble.stop()                      // ----+
+        move(Angle.Backward, 90.cm, q)
 
-        wobble.lock()
-
-        move(Angle.Right, (38 + 4 - 3).cm, s)
-        align()
-        accel(Angle.Forward, (200 - 9 + 5 - 7 + 3 + 5).cm, q)
-
-        align()
-        wobble.release()
-        wobble.up()
-
-        move(Angle.Backward, 72.cm, f)
+//        align()
+//        accel(Angle.Backward, (220 - 9 + 5 - 7 + 3 + 5 + 5 - 10 - 5 - 5 + 2).cm, k)
+//        align()
+//
+//        wobble.downAsync()                          // ----+
+//                                                    //     |
+//        move(Angle.Left, (23 + 15 + 8 + 4 - 3 + 3 + 10 - 20).cm, s)   //     |
+//        // align()                                     //     |
+//                                                    //     |
+//        hardware.wobble.stop()                      // ----+
+//
+//        wobble.lock()
+//
+//        move(Angle.Right, (38 + 4 - 3 + 10 + 10 - 20 + 5).cm, s)
+//        align()
+//        accel(Angle.Forward, (200 - 9 + 5 - 7 + 3 + 5 - 5 - 5 + 2).cm, q)
+//
+//        align()
+//        wobble.release()
+//        wobble.up()
+//
+//        move(Angle.Backward, 72.cm, f)
     }
 
     private suspend fun full() = with(bot) {
-        move(Angle.Left, 35.cm, s)
-
-        accel(Angle.Forward, 152.cm, q)
-        move(Angle.Forward, f); Thread.sleep(300L); robot.stop()
-
-        wobble.down()
-        wobble.release()
-        wobble.up()
-
-        move(Angle.Backward, 10.cm, q)
-        move(Angle.Right, 10.cm, f)
-        align()
-
+        // first 2
         intake.intake()
 
-        wobble.downAsync()                         // ---+
-        accel(Angle.Backward, (242 - 5 + 5).cm, q) //    |
-        hardware.wobble.stop()                     // ---+
+        move(Angle.Backward, 20.cm, hardware.m1.velocity * 0.6)
+        move(Angle.Backward, 25.cm, hardware.m1.velocity * 0.2)
+
+
+        shooter.revup()
+
+        move(Angle.Forward, 44.cm, s)
+        align()
+
+//        intake.stop()
+
+        shooter.shoot(3)
+        shooter.revdown()
+
+        // last 2
+
+//        intake.intake()
+
+        move(Angle.Backward, 40.cm, hardware.m1.velocity * 0.6)
+        move(Angle.Backward, 25.cm, hardware.m1.velocity * 0.2)
+
+        shooter.revup()
+
+        move(Angle.Forward, 65.cm, s)
+        align()
+
+        wobble.downAsync()
+
+        shooter.shoot(3)
+        shooter.revdown()
 
         intake.stop()
 
-        align()
-        wobble.lock()
-        move(Angle.Left, 5.cm, k)
-        align()
+        hardware.wobble.stop()
 
-        accel(Angle.Forward, (250 - 5 + 5).cm, q)
-        move(Angle.Forward, s); Thread.sleep(300L); robot.stop()
+        //
 
-//        align((-10).deg)
-        rotate(12.deg, q)
+        move(Angle.Left, 10.cm, f)
+
+        accel(Angle.Forward, 150.cm, q)
+        move(Angle.Forward, q); Thread.sleep(400L); robot.stop()
+
         wobble.release()
         wobble.up()
 
-        move(Angle.Right, 5.cm, s)
-        move(Angle.Backward, 122.cm, q)
+        move(Angle.Backward, 120.cm, q)
+//        move(Angle.Right, (10 + 36 - 27).cm, f)
+//        align()
+
+        // START
+
+//        intake.intake()
+//
+//        accel(Angle.Backward, (150).cm, q)
+//        move(Angle.Backward, 15.cm, hardware.m1.velocity * 0.2)
+//
+//        shooter.revup()
+//
+//        move(Angle.Forward, 30.cm, s)
+//        align()
+//
+//        intake.stop()
+//
+//        shooter.shoot(4)
+//        shooter.revdown()
+//
+//        move(Angle.Forward, 15.cm, q)
+
+
+//        intake.intake()
+//
+//        wobble.downAsync()                         // ---+
+//        accel(Angle.Backward, (242 - 5 + 5).cm, q) //    |
+//        hardware.wobble.stop()                     // ---+
+//
+//        intake.stop()
+//
+//        align()
+//        wobble.lock()
+//        move(Angle.Left, 5.cm, k)
+//        align()
+//
+//        accel(Angle.Forward, (250 - 5 + 5).cm, q)
+//        move(Angle.Forward, s); Thread.sleep(300L); robot.stop()
+//
+////        align((-10).deg)
+//        rotate(12.deg, q)
+//        wobble.release()
+//        wobble.up()
+//
+//        move(Angle.Right, 5.cm, s)
+//        move(Angle.Backward, 122.cm, q)
     }
 }

@@ -13,6 +13,7 @@ import io.arct.rl.hardware.sensors.DistanceEncoder
 import io.arct.rl.robot.Robot
 import io.arct.rl.robot.drive.Drive
 import io.arct.rl.robot.drive.IDrive
+import io.arct.rl.robot.drive.MecanumDrive
 import io.arct.rl.robot.position.DynamicPositioning
 import io.arct.rl.robot.position.IPositioning
 import io.arct.rl.robot.position.NoPositioning
@@ -226,15 +227,69 @@ class Bot(
                 else ->                          (td - d) / decelDistance * (sp - minSpeedEnd) + minSpeedEnd
             }.mps
 
-            when {
-                y1.position > y2.position -> turn(spd, .2.mps)
-                y1.position < y2.position -> turn(spd, (-.2).mps)
-                else ->                      move(direction, spd)
-            }
+//            when {
+//                y1.position > y2.position -> turnss(spd, (.1 * (y2.position.cm.value - y1.position.cm.value)).mps)
+//                y1.position < y2.position -> turnss(spd, (-.1 * (y2.position.cm.value - y1.position.cm.value)).mps)
+//                else ->                      move(direction, spd)
+//            }
+
+            move(direction, spd)
         } while (d <= td)
 
         stop()
         return this
+    }
+
+    fun turnss(speed: Velocity, rotationSpeed: Velocity) {
+        val v = hardware.m1.velocity
+
+        val a = speed - if (rotationSpeed > 0.mps) rotationSpeed else .0.mps
+        val b = speed + if (rotationSpeed < 0.mps) rotationSpeed else .0.mps
+
+//        val a = abs(speed.mps.value).mps + if (rotationSpeed > 0.cmps) rotationSpeed else 0.0.cmps
+//        val b = abs(speed.mps.value).mps - if (rotationSpeed < 0.cmps) rotationSpeed else 0.0.cmps
+//
+//        var x = a / v
+//        var y = b / v
+//
+//        when {
+//            x > 1 -> {
+//                y /= x
+//                x = 1.0
+//            }
+//
+//            y > 1 -> {
+//                x /= y
+//                y = 1.0
+//            }
+//
+////            x < -1 -> {
+////                y /= -x
+////                x = -1.0
+////            }
+////
+////            y < -1 -> {
+////                x /= -y
+////                y = -1.0
+////            }
+//        }
+
+//        if (speed.value < 0) {
+//            x = -x
+//            y = -y
+//        }
+
+
+//        val (l, r) = Double.normalize(a / velocity, b / velocity)
+        val l = a
+        val r = b
+
+        hardware.m1.power(l)
+        hardware.m2.power(l)
+        hardware.m3.power(r)
+        hardware.m4.power(r)
+
+//        DynamicPositioning.updateAngular(robot.positioning)
     }
 
     suspend fun accel(direction: Angle, distance: Distance, speed: Double): Bot =

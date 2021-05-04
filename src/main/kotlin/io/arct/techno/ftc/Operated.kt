@@ -28,6 +28,8 @@ class Operated : OperationMode() {
     var power = bot.calibration.shooterPower
     var high = bot.calibration.shooterHigh
 
+    var grey = false
+
     override suspend fun loop() = with(bot) {
         var stick = false
         gamepad0 {
@@ -101,9 +103,11 @@ class Operated : OperationMode() {
             }
 
             click(Controller::rb) {
-                GlobalScope.async {
+                if (!grey) GlobalScope.async {
+                    grey = true
                     while (+gamepad1.rb)
                         shooter.cshoot()
+                    grey = false
                 }
             }
 
