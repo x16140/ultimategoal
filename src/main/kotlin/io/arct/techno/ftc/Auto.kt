@@ -28,7 +28,7 @@ class Auto : LinearOperationMode() {
     val q = 1.7.mps
     val k = 1.5.mps
     val f = 1.3.mps
-    val s = 1.mps
+    val s = .9.mps
 
     var mode = AutonomousState.Detect
     var saveScan = false
@@ -122,25 +122,26 @@ class Auto : LinearOperationMode() {
     }
 
     private suspend fun none() = with(bot) {
-        move(Angle.Forward, 54.cm, s)
-        move(Angle.Left, 22.cm, s)
+        move(Angle.Forward, (54 + 10).cm, s)
+        move(Angle.Left, (22).cm, s)
 
         wobble.down()
         wobble.release()
         wobble.up()
 
-        move(Angle.Right, (56 - 40 - 5 + 5 - 5).cm, s)
-        align()
-        accel(Angle.Backward, 151.cm, k)
-
+        move(Angle.Right, (56 - 40 - 5 + 5 - 5 + 6).cm, s)
         align()
         wobble.down()
-        wobble.lock()
-
-        accel(Angle.Forward, 140.cm, f)
-        move(Angle.Left, (56 - 38 + 15 - 5).cm, s)
+        accel(Angle.Backward, (151 + 7).cm, k)
 
         align()
+        wobble.lock()
+
+        accel(Angle.Forward, (140 + 3 + 7).cm, f)
+        align()
+        move(Angle.Left, (56 - 38 + 15 - 5 - 5).cm, s)
+
+
         wobble.release()
         wobble.up()
 
@@ -208,6 +209,8 @@ class Auto : LinearOperationMode() {
     }
 
     private suspend fun full() = with(bot) {
+        move(Angle.Right, 7.cm, s)
+
         // first 2
         intake.intake()
 
@@ -217,7 +220,7 @@ class Auto : LinearOperationMode() {
 
         shooter.revup()
 
-        move(Angle.Forward, 44.cm, s)
+        move(Angle.Forward, (44 + 10 - 1.7 - 1.7 - 1.7 - 1.7 - 1.7).cm, s)
         align()
 
 //        intake.stop()
@@ -229,12 +232,12 @@ class Auto : LinearOperationMode() {
 
 //        intake.intake()
 
-        move(Angle.Backward, 40.cm, hardware.m1.velocity * 0.6)
+        move(Angle.Backward, (40 + 10 - 1.7 - 1.7 - 1.7 - 1.7 - 1.7).cm, hardware.m1.velocity * 0.6)
         move(Angle.Backward, 25.cm, hardware.m1.velocity * 0.2)
 
         shooter.revup()
 
-        move(Angle.Forward, 65.cm, s)
+        move(Angle.Forward, (65 + 10 - 1.7 - 1.7 - 1.7 - 1.7 - 1.7).cm, f)
         align()
 
         wobble.downAsync()
@@ -250,7 +253,7 @@ class Auto : LinearOperationMode() {
 
         move(Angle.Left, 10.cm, f)
 
-        accel(Angle.Forward, 150.cm, q)
+        accel(Angle.Forward, (150 - 10).cm, q)
         move(Angle.Forward, q); Thread.sleep(400L); robot.stop()
 
         wobble.release()
